@@ -1,3 +1,8 @@
+![alt text](raw/master/docs/techradar1.jpg "Neofonie Tech Radar #1")
+  
+![alt text](raw/master/docs/techradar2.jpg "Neofonie Tech Radar #2")
+
+
 # Motivation
 
 At [Neofonie](https://neofonie.de), we maintain a [public Tech
