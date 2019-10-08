@@ -2,33 +2,43 @@ import crypto from 'crypto';
 import Module from "../../Module";
 
 export default class extends Module {
-    constructor() {
+    constructor(args) {
         super();
 
         return new Promise((resolve, reject) => {
             this.label = 'DATASOURCE';
             console.log(this.label, 'INIT');
 
+            this.radar = args;
+
             this.secret = 'erdbeerkuchen';
             this.storage_prefix = 'techradar_';
             this.storage = localStorage;
-            this.cache_age = 0; //60 * 60; // seconds * minutes = (one) hour(s)
+            this.cache_age = 0;
 
             this.baseUrl = `${document.location.origin}${document.location.pathname}`;
             this.dataIndexUrl = `${this.baseUrl}data/index.json`;
             this.configUrl = false;
-            this.dataSet = false;
-            this.dataVersion = false;
+
+            this.dataIndex = false;     // the index of all ids
+            this.dataSet = false;       // the selected dataset
+            this.dataVersion = false;   // the selected version
+            this.data = false;          // the dots data
 
             this.config = false;
-            this.data = false;
-
 
             this
                 .getDataIndex()
                 .then(dataIndex => {
                     this.dataIndex = dataIndex;
-                    const defaultData = this.dataIndex.filter(i => i.default)[0];
+                    this.cache_age = (this.dataSet.cache_age || 0) * 60 * 60; // seconds * minutes = (one) hour(s)
+
+                    // @ TODO GET THE HASH VERSION
+                    //const defaultData = this.dataIndex.filter(i => i.default)[0];
+                    const defaultData = this.dataIndex.filter(i => i.id === this.radar.controls.id)[0];
+                    console.log('>>>', defaultData);
+                    const defaultVersion = defaultData.version || this.radar.controls.version;
+
                     return this.selectDataSet(defaultData.id, defaultData.version);
                 })
                 .then(() => {
@@ -43,12 +53,12 @@ export default class extends Module {
 
     selectDataSet(id, version) {
         this.dataSet = this.dataIndex.filter(i => i.id === id)[0];
-        if(!this.dataSet)
+        if (!this.dataSet)
             return false;
 
         document.querySelector('body').classList.add('loading');
 
-        return new Promise((resolve,reject) => {
+        return new Promise((resolve, reject) => {
             this.getConfig()
                 .then(config => {
                     this.config = config;
@@ -138,6 +148,13 @@ export default class extends Module {
             });
     }
 
+    hasId(id) {
+        return this.dataIndex.filter(i => i.id === id)[0];
+    }
+
+    hasVersion(version) {
+        return this.dataSet.versions.includes(version);
+    }
 
     getStorageJson(field) {
         if (this.storage[`${this.storage_prefix}${field}`]) {

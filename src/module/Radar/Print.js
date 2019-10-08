@@ -56,6 +56,9 @@ export default class extends Module {
 
     disable(){
         this.printStyle = document.querySelector('#print-style');
+        if(!this.printStyle)
+            return;
+
         this.printStyle.remove();
         this.printStyle = false;
     }

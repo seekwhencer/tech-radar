@@ -7,6 +7,7 @@ import Legends from './Legends.js';
 import Lines from './Lines.js';
 import Menu from './Menu.js';
 import Print from './Print.js';
+import Controls from './Controls.js';
 import PageTemplate from './Templates/Page.html';
 
 export default class extends Module {
@@ -16,11 +17,13 @@ export default class extends Module {
             this.label = 'RADAR';
             console.log(this.label, 'INIT');
 
+            this.controls = new Controls(this);
+
             // init the datasource
             // AND get the data index
             // AND get the config
             // AND get the data - by the data index
-            new Datasource()
+            new Datasource(this)
                 .then(datasource => {
                     this.dataSource = datasource;
                     this.config = this.dataSource.config;
@@ -32,12 +35,11 @@ export default class extends Module {
 
                     // the dataset change
                     this.menu.on('version-selected', (id, version) => {
-                        this.emit('version-selected', id, version);
-                        this.dataSource.selectDataSet(id, version).then(() => {
-                            this.config = this.dataSource.config;
-                            this.data = this.dataSource.data;
-                            this.redraw();
-                        });
+                        // @TODO set the hash, and then select version by hash
+                        this.selectVersion(id, version);
+                    });
+                    this.on('version-selected', (id, version) => {
+
                     });
 
                     this.build();
@@ -89,6 +91,7 @@ export default class extends Module {
 
 
             this.on('ready', () => {
+                this.getHash();
                 resolve(this);
             });
         });
@@ -127,6 +130,7 @@ export default class extends Module {
         this.lines.draw();
 
         this.print = new Print(this);
+
 
         this.emit('ready');
     }
@@ -169,7 +173,7 @@ export default class extends Module {
         let styleHRef = `css/${this.config.theme}.css`;
 
         // the theme style element
-        if(this.themeStyle){
+        if (this.themeStyle) {
             this.themeStyle.remove();
         }
         this.themeStyle = document.createElement('link');
@@ -187,6 +191,23 @@ export default class extends Module {
         this.themeStyle.href = styleHRef;
         if (styleHRef === '')
             this.emit('style-loaded');
+    }
+
+    selectVersion(id, version) {
+        console.log('>>> SELECTING:', id, version);
+        //if(!this.dataSource.hasId(id) || !this.dataSource.hasVersion(version))
+        //    return false;
+
+        this.dataSource.selectDataSet(id, version).then(() => {
+            this.config = this.dataSource.config;
+            this.data = this.dataSource.data;
+            this.emit('version-selected', id, version);
+            this.redraw();
+        });
+    }
+
+    getHash() {
+        this.controls.getHash();
     }
 
     get resizing() {
