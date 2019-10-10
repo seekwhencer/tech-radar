@@ -32,11 +32,14 @@ export default class extends Module {
                 .then(dataIndex => {
                     this.dataIndex = dataIndex;
                     this.cache_age = (this.dataSet.cache_age || 0) * 60 * 60; // seconds * minutes = (one) hour(s)
-                    
+
+                    // set the dataset by the default index
                     let defaultData = this.dataIndex.filter(i => i.default)[0];
+                    // override the dataset by given id per controls
                     if(this.radar.controls.id)
                         defaultData = this.dataIndex.filter(i => i.id === this.radar.controls.id)[0];
 
+                    // the default version from data index or from the controls
                     const defaultVersion = defaultData.version || this.radar.controls.version;
                     return this.selectDataSet(defaultData.id, defaultVersion);
                 })

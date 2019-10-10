@@ -8,8 +8,8 @@ export default class extends Module {
         this.radar = radar;
 
         // the hash field number, splitted by /
-        this.id = 0;
-        this.version = 1;
+        this.idField = 0;
+        this.versionField = 1;
 
         window.addEventListener(onhashchange, () => this.getHash());
         this.getHash();
@@ -25,8 +25,14 @@ export default class extends Module {
 
     parseHash() {
         const s = this.hash.split('/');
-        this.id = s[0].replace(/#/,'');
-        this.version = s[1];
+
+        // @TODO customizable per data index : field number 0 and 1
+
+        this.id = s[this.idField].replace(/#/,'');
+        this.version = s[this.versionField];
+
+        // @TODO id and version check here by existing ones
+
         console.log('>>> PARSE HASH: GROUP', this.id, 'VERSION', this.version);
     }
 
@@ -40,11 +46,11 @@ export default class extends Module {
     }
 
     get id() {
-        return this._group;
+        return this._id;
     }
 
     set id(val) {
-        this._group = val;
+        this._id = val;
     }
 
     get version() {
