@@ -32,14 +32,13 @@ export default class extends Module {
                 .then(dataIndex => {
                     this.dataIndex = dataIndex;
                     this.cache_age = (this.dataSet.cache_age || 0) * 60 * 60; // seconds * minutes = (one) hour(s)
+                    
+                    let defaultData = this.dataIndex.filter(i => i.default)[0];
+                    if(this.radar.controls.id)
+                        defaultData = this.dataIndex.filter(i => i.id === this.radar.controls.id)[0];
 
-                    // @ TODO GET THE HASH VERSION
-                    //const defaultData = this.dataIndex.filter(i => i.default)[0];
-                    const defaultData = this.dataIndex.filter(i => i.id === this.radar.controls.id)[0];
-                    console.log('>>>', defaultData);
                     const defaultVersion = defaultData.version || this.radar.controls.version;
-
-                    return this.selectDataSet(defaultData.id, defaultData.version);
+                    return this.selectDataSet(defaultData.id, defaultVersion);
                 })
                 .then(() => {
                     this.emit('ready');
