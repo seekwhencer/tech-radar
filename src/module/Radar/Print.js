@@ -4,7 +4,6 @@ export default class extends Module {
     constructor(radar) {
         super();
         this.label = 'PRINT';
-        console.log(this.label, 'INIT');
         this.radar = radar;
         
         // the layer

@@ -15,8 +15,6 @@ export default class extends Module {
         super();
         return new Promise((resolve, reject) => {
             this.label = 'RADAR';
-            console.log(this.label, 'INIT');
-
             this.controls = new Controls(this);
 
             // init the datasource
@@ -34,15 +32,14 @@ export default class extends Module {
                     this.menu.draw();
 
                     // the dataset change
-                    this.menu.on('version-selected', (id, version) => {
-                        // @TODO set the hash, and then select version by hash
-                        this.selectVersion(id, version);
-                    });
+                    this.menu.on('version-selected', (dataSet, version) => this.selectVersion(dataSet.id, version));
+
                     this.on('version-selected', (id, version) => {
-
+                        console.log('>>>', this.label.padStart(15, ' '), '>', 'ON VERSION SELECTED', id, version);
+                        this.redraw();
                     });
 
-                    this.build();
+                    this.selectVersion();
                 });
 
             // create some elements while datasource is am rumrödeln
@@ -89,9 +86,7 @@ export default class extends Module {
                 this.legends.draw();
             });
 
-
             this.on('ready', () => {
-                this.getHash();
                 resolve(this);
             });
         });
@@ -150,7 +145,7 @@ export default class extends Module {
     }
 
     redraw() {
-        console.log('>>> REDRAWING');
+        console.log('>>>', this.label.padStart(15, ' '), '>', 'REDRAWING');
         this.destroy();
         this.build();
     }
@@ -193,17 +188,24 @@ export default class extends Module {
             this.emit('style-loaded');
     }
 
-    selectVersion(id, version) {
-        console.log('>>> SELECTING:', id, version);
-        //if(!this.dataSource.hasId(id) || !this.dataSource.hasVersion(version))
-        //    return false;
 
-        this.dataSource.selectDataSet(id, version).then(() => {
-            this.config = this.dataSource.config;
-            this.data = this.dataSource.data;
-            this.emit('version-selected', id, version);
-            this.redraw();
-        });
+    selectVersion(id, version) {
+        if (!id)
+            id = this.controls.id;
+        if (!version)
+            version = this.controls.version;
+
+        console.log('');
+        console.log('>>>', this.label.padStart(15, ' '), '>', 'SELECT VERSION', id, version);
+
+        this.dataSource
+            .selectDataSet(id, version)
+            .then(() => {
+                console.log('>>>', this.label.padStart(15, ' '), '>', 'SELECT VERSION', id, version);
+                this.config = this.dataSource.config;
+                this.data = this.dataSource.data;
+                this.emit('version-selected', id, version);
+            });
     }
 
     getHash() {
