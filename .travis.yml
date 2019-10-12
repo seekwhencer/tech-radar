@@ -10,9 +10,12 @@ after_install:
 deploy:
   provider: pages
   skip_cleanup: true
-  github_token: $GITHUB_TOKEN
+  github_token: "$GITHUB_TOKEN"
   keep_history: true
   target_branch: gh-pages
   local_dir: docs
   on:
     branch: master
+env:
+  global:
+    secure: gNTaeWULKVZekDe3nqFXYN2+/DTK6sH7krd09p11ZvP5eTvMhBzFHQYRbd5BgdQS7QC13eYMUZb8mtZRXqBzW3dFPBS1YKQo36k1P+WEpE7WSTFNePBq+hgT2x+74SzEQ2+7AY2YwOqpUzx4M7yUBRpdmPsIzOOVqDYcYfcj0/uxHwD5ir/CzUKdFktbYONZt2zNKsic25M4EX/P5j+4fSCwrd7akbxg2TATxo1TRdQxXCY1We87TktZ6Nj8COjFUD9mC49x2LPAUqd2HbG688ThEwH7M6d8l5f+JMrIlmeEqnB+w8zujW5obBZ/Go9dYA3KeJg2ahf2ekxetuLAzt4H306PVnqP5HW4fzdiTd1gK/x8eTuPcIykRSrPBXdp6W4uAsxTcIhWJ4d3WnSrnHC+XYv26PN+FyhlxpFDYUijsnA4C9feik8NAhNX+UsqsRTSp1fVpTSYDZwnaixf1dPJEQRdtPsKh6enFk5sxWkiLn1suJG/uqBa+2o5YRedEsN0arxkcuqqmKcd+AE2QHMl7HsPP/U5v4U3bJVF1RmKGWXAyGExbgNvaDlIatyXS2HWyWEmBEVkDhMYO+K4HP/stuHe0Vp8ylTgp+OyifL8PQawgDSdeIB+oMw58vkuYohBoULHwPFdWLsBNw+rOMIXPeDQu5ZbmuCK/qLwHPY=
